@@ -11,7 +11,7 @@ class Tutor(models.Model):
 class Pet(models.Model):
     nome=models.CharField(max_length=60)
     especie=models.CharField(max_length=50)
-    raça=models.CharField(max_length=60)
+    raca=models.CharField(max_length=60)
     idade=models.IntegerField()
     tutor=models.ForeignKey(Tutor,on_delete=models.CASCADE,related_name="pets")
     def __str__(self):

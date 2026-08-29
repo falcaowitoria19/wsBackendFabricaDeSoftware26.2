@@ -1,0 +1,101 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Pet</title>
+    <link rel="stylesheet" href="{%static 'pets/style.css'%}">
+</head>
+<body>
+    <div class="container">
+     <h1>🐾 Cadastrar Pet 🐾</h1>
+     <form id="form-pet">
+        {%csrf_token%}
+        <div class="campo">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required >
+        </div>
+            
+        <div class="campo">
+            <label for="especie">Espécie</label>
+            <input type="text" id="especie" required>
+        </div>
+        <p>
+            📸 A busca de imagem por raça está disponível apenas para cães.
+        </p>
+        <div class="campo">
+            <label for="raca">Raça</label>
+            <input type="text" id="raca" required>
+        </div>
+        
+        <div class="campo">
+            <label for="idade">Idade</label>
+            <input type="number" id="idade" required>
+        </div>
+        <div class="campo">
+        <p>
+            Tutor selecionado:
+            <strong>ID {{tutor_id}}</strong>
+        </p>
+        </div>
+        <button type="submit" class="botao botao-azul">Cadastrar Pet</button>
+     </form>
+     <p id="mensagem"></p>
+     <script>
+        document.getElementById('form-pet').addEventListener('submit',async function(event) {
+            event.preventDefault();
+            console.log("Botão de cadastrar pet clicado!");
+
+
+            const pet ={
+                nome:document.getElementById("nome").value,
+                especie:document.getElementById("especie").value,
+                raca:document.getElementById('raca').value,
+                idade:document.getElementById('idade').value,
+                tutor:Number("{{tutor_id}}")
+            };
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+               const resposta = await fetch("/api/pets/", {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type": "application/json",
+
+                        "X-CSRFToken": csrfToken
+
+                    },
+
+                    body: JSON.stringify(pet)
+
+                });
+
+
+                const dados = await resposta.json();
+
+
+                console.log("Status:", resposta.status);
+
+                console.log("Resposta:", dados);
+
+
+                if (resposta.ok) {
+
+                     window.location.href = `/informacoes_pet/${dados.id}/`;
+
+
+                } else {
+
+                    document.getElementById("mensagem").innerText =
+                        "Erro ao cadastrar Pet.";
+
+                }
+
+            }
+        );
+
+     </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Tutor</title>
+    <link rel="stylesheet" href="{%static 'pets/style.css'%}">
+</head>
+<body>
+    <div class="container">
+      <h1>🐾 Cadastrar Tutor</h1>
+      <form id="form-tutor">
+        {%csrf_token%}
+        <div class="campo">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required>
+        </div>
+        <div class="campo">
+            <label for="Telefone:">Telefone:</label>
+            <input type="text" id="telefone" required>
+        </div>
+        
+        <div class="campo">
+        <label for="E-mail:">E-mail:</label>
+        <input type=" email" id="email" required>
+        </div>
+         <button type="submit" class="botao botao-verde">Cadastrar Tutor</button>
+      </form>
+    </div>
+      <p id="mensagem"></p>
+      <script>
+         document.getElementById("form-tutor").addEventListener("submit", async function(event) {
+
+            event.preventDefault();
+            console.log("Botão Clicado!")
+
+            const tutor = {
+
+                    nome: document.getElementById("nome").value,
+
+                    telefone: document.getElementById("telefone").value,
+
+                    email: document.getElementById("email").value
+
+                };
+
+
+                const csrfToken = document.querySelector(
+                    '[name=csrfmiddlewaretoken]'
+                ).value;
+
+
+                const resposta = await fetch("/api/tutores/", {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type": "application/json",
+
+                        "X-CSRFToken": csrfToken
+
+                    },
+
+                    body: JSON.stringify(tutor)
+
+                });
+
+
+                const dados = await resposta.json();
+
+                console.log("Status:", resposta.status);
+
+                console.log("Resposta:", dados);
+
+
+                if (resposta.ok) {
+
+                    document.getElementById("mensagem").innerText =
+                        "Tutor cadastrado com sucesso!";
+
+                    window.location.href = `/cadastrar_pet/${dados.id}/`;
+
+                } else {
+
+                    document.getElementById("mensagem").innerText =
+                        "Erro ao cadastrar tutor.";
+
+                }
+
+            }
+        );
+
+    </script>
+
+   
+</body>
+</html>

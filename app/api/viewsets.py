@@ -12,16 +12,21 @@ class PetViewSet(viewsets.ModelViewSet):
     serializer_class=PetSerializer
     @action(detail=True, methods=['GET'])
     def raca(self, request, pk=None):
+
         pet = self.get_object()
-        print("RAÇA:", pet.raca)
-        url = f"https://dog.ceo/api/breed/{pet.raca.lower()}/images/random"
-        print("URL:", url)
+
+        raca = pet.raca.lower().strip().replace(" ", "-")
+
+        url = f"https://dog.ceo/api/breed/{raca}/images/random"
+
         try:
+
             resposta = requests.get(url, timeout=5)
-            print("STATUS:", resposta.status_code)
-            print("RESPOSTA:", resposta.text)
+
             if resposta.status_code == 200:
+
                 dados = resposta.json()
+
                 return Response({
                     "pet": pet.nome,
                     "raca": pet.raca,
@@ -29,11 +34,17 @@ class PetViewSet(viewsets.ModelViewSet):
                 })
 
             return Response(
-                {"erro": "Não foi possível encontrar imagens dessa raça."},
+                {
+                    "erro": "Não foi possível encontrar imagens dessa raça."
+                },
                 status=resposta.status_code
             )
+
         except requests.RequestException:
+
             return Response(
-                {"erro": "Não foi possível consultar a API externa."},
+                {
+                    "erro": "Não foi possível consultar a API externa."
+                },
                 status=503
             )

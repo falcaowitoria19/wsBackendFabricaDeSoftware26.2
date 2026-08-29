@@ -1,0 +1,120 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informações Gerais</title>
+    <link rel="stylesheet" href="{% static 'pets/style.css' %}">
+</head>
+<body>
+    <div class="container">
+    <h1>🐾 Informações do Pet</h1>
+    <div class="pet-info">
+        <section>
+            <h2>🐶 Pet</h2>
+            <div class="info-linha"><strong>Nome:</strong>
+            {{pet.nome}}
+        <p></div>
+            <div class="info-linha"><strong>Espécie:</strong>
+            {{pet.especie}}
+        </p></div>
+        <p>
+          <div class="info-linha"><strong>Raça:</strong>
+            {{pet.raca}}
+        </p></div>
+        <p>
+           <div class="info-linha"><strong>Idade</strong>
+            {{pet.idade}} anos
+        </p></div>
+        </section>
+        <section>
+         <h2>👤 Tutor</h2>
+         <p>
+            <div class="info-linha"><strong>Nome:</strong>
+            {{pet.tutor.nome}}
+         </p></div>
+         <p>
+            <div class="info-linha"><strong>Telefone:</strong>
+            {{pet.tutor.telefone}}
+         </p></div>
+         <p>
+            <div class="info-linha"><strong>E-mail:</strong>
+            {{pet.tutor.email}}
+         </p></div>
+         </section>
+         <section id="imagem-raca">
+             <h2>📸 Foto da raça</h2>
+              <p>
+        A busca de imagens está disponível apenas para cães.
+    </p>
+            <p>Buscando imagem...</p>
+        </section>
+     <script>
+
+async function buscarImagem() {
+
+    const imagemRaca = document.getElementById("imagem-raca");
+    if ("{{ pet.especie }}".toLowerCase() !== "cachorro") {
+
+        imagemRaca.innerHTML = `
+            <h2>📸 Foto da raça</h2>
+
+            <p>
+                A busca de imagens está disponível apenas
+                para cães.
+            </p>
+        `;
+
+        return;
+    }
+
+    try {
+
+        const resposta = await fetch(
+            "/api/pets/{{ pet.id }}/raca/"
+        );
+
+        console.log("Status da API:", resposta.status);
+
+        const dados = await resposta.json();
+
+        console.log("Dados recebidos:", dados);
+
+        if (resposta.ok && dados.imagem) {
+
+    imagemRaca.innerHTML = `
+        <h2>📸 Foto da raça</h2>
+
+        <p>Raça: ${dados.raca}</p>
+
+        <img
+            src="${dados.imagem}"
+            alt="Foto de ${dados.raca}"
+            style="width: 300px; border-radius: 15px;"
+        >
+    `;
+
+    console.log("IMAGEM:", dados.imagem);
+
+}
+
+    } catch (erro) {
+
+        console.error("Erro:", erro);
+
+        imagemRaca.innerHTML = `
+            <h2>📸 Foto da raça</h2>
+            <p>Erro ao consultar a API.</p>
+        `;
+
+    }
+
+}
+
+buscarImagem();
+
+</script>
+    
+</body>
+</html>

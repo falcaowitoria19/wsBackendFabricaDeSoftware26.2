@@ -17,11 +17,3 @@ class Pet(models.Model):
     def __str__(self):
         return self.nome
 
-class Consulta(models.Model):
-    pet=models.ForeignKey(Pet,on_delete=models.CASCADE,related_name="consultas")
-    data=models.DateField()
-    motivo_consulta=models.CharField(max_length=250)
-    observacao=models.TextField(blank=True)
-    status=models.CharField(max_length=30)
-    def __str__(self):
-        return f"{self.pet.nome} - {self.data}"
